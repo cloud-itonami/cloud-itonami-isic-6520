@@ -2,7 +2,7 @@
 
 ## Classification
 
-- Repository: `cloud-itonami-6520`
+- Repository: `cloud-itonami-isic-6520`
 - ISIC Rev.5: `6520`
 - Activity: treaty and facultative reinsurance -- risk-transfer contracting between a ceding insurer and a reinsurer, claims-recovery processing and retrocession
 - Social impact: financial inclusion, data sovereignty, transparent audit

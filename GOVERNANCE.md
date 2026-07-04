@@ -1,6 +1,6 @@
 # Governance
 
-`cloud-itonami-6520` is an OSS open-business blueprint for treaty and facultative reinsurance -- risk-transfer contracting between a ceding insurer and a reinsurer, claims-recovery processing and retrocession.
+`cloud-itonami-isic-6520` is an OSS open-business blueprint for treaty and facultative reinsurance -- risk-transfer contracting between a ceding insurer and a reinsurer, claims-recovery processing and retrocession.
 Governance covers both the capability layer and the operator model.
 
 ## Maintainers

@@ -1,4 +1,4 @@
-# cloud-itonami-6520
+# cloud-itonami-isic-6520
 
 Open Business Blueprint for **ISIC Rev.5 6520**: Reinsurance.
 
