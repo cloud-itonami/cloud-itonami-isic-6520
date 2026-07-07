@@ -31,6 +31,14 @@
 ## Trust Controls
 
 - no treaty is bound and no recovery is paid without human sign-off
-- fabricated bordereaux data forces a hold, not an override
-- every bind and recovery path is auditable
+- a fabricated jurisdiction bordereaux/collateral citation, unsupported
+  binding evidence, a recovery filed against an unbound treaty, or a
+  claimed recovery amount that does not match this vehicle's own
+  independent quota-share/excess-of-loss recompute -- each forces a
+  hold, not an override
+- a recovery cannot be paid twice: a double-payment attempt is held off
+  this actor's own recovery-payment history alone, with no upstream
+  comparison needed
+- every intake, assessment, binding, filing and payment path is
+  auditable
 - emergency manual override paths remain outside LLM control
