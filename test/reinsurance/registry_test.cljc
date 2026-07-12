@@ -17,10 +17,10 @@
       "capped at the top of the layer"))
 
 (deftest compute-recovery-validation-rules
-  (is (thrown? Exception (r/compute-recovery {:treaty-type :quota-share :quota-share-pct 1.5 :coverage-limit 100} 100)))
-  (is (thrown? Exception (r/compute-recovery {:treaty-type :excess-of-loss :retention -1 :layer-limit 100} 100)))
-  (is (thrown? Exception (r/compute-recovery {:treaty-type :unknown} 100)))
-  (is (thrown? Exception (r/compute-recovery {:treaty-type :quota-share :quota-share-pct 0.5 :coverage-limit 100} -1))))
+  (is (thrown? #?(:clj Exception :cljs js/Error) (r/compute-recovery {:treaty-type :quota-share :quota-share-pct 1.5 :coverage-limit 100} 100)))
+  (is (thrown? #?(:clj Exception :cljs js/Error) (r/compute-recovery {:treaty-type :excess-of-loss :retention -1 :layer-limit 100} 100)))
+  (is (thrown? #?(:clj Exception :cljs js/Error) (r/compute-recovery {:treaty-type :unknown} 100)))
+  (is (thrown? #?(:clj Exception :cljs js/Error) (r/compute-recovery {:treaty-type :quota-share :quota-share-pct 0.5 :coverage-limit 100} -1))))
 
 ;; ----------------------------- register-binding -----------------------------
 
@@ -38,10 +38,10 @@
     (is (= (get-in result ["record" "treaty_type"]) "quota-share"))))
 
 (deftest binding-validation-rules
-  (is (thrown? Exception (r/register-binding "" :quota-share "JPN" 1)))
-  (is (thrown? Exception (r/register-binding "Sakura" :unknown-type "JPN" 1)))
-  (is (thrown? Exception (r/register-binding "Sakura" :quota-share "" 1)))
-  (is (thrown? Exception (r/register-binding "Sakura" :quota-share "JPN" -1))))
+  (is (thrown? #?(:clj Exception :cljs js/Error) (r/register-binding "" :quota-share "JPN" 1)))
+  (is (thrown? #?(:clj Exception :cljs js/Error) (r/register-binding "Sakura" :unknown-type "JPN" 1)))
+  (is (thrown? #?(:clj Exception :cljs js/Error) (r/register-binding "Sakura" :quota-share "" 1)))
+  (is (thrown? #?(:clj Exception :cljs js/Error) (r/register-binding "Sakura" :quota-share "JPN" -1))))
 
 ;; ----------------------------- register-recovery-payment -----------------------------
 
@@ -61,12 +61,12 @@
     (is (= (get-in result ["record" "immutable"]) true))))
 
 (deftest recovery-payment-validation-rules
-  (is (thrown? Exception (r/register-recovery-payment "" "recovery-1" 1000000 500000 "JPN" 0)))
-  (is (thrown? Exception (r/register-recovery-payment "JPN-00000000" "" 1000000 500000 "JPN" 0)))
-  (is (thrown? Exception (r/register-recovery-payment "JPN-00000000" "recovery-1" -1 500000 "JPN" 0)))
-  (is (thrown? Exception (r/register-recovery-payment "JPN-00000000" "recovery-1" 1000000 -1 "JPN" 0)))
-  (is (thrown? Exception (r/register-recovery-payment "JPN-00000000" "recovery-1" 1000000 500000 "" 0)))
-  (is (thrown? Exception (r/register-recovery-payment "JPN-00000000" "recovery-1" 1000000 500000 "JPN" -1))))
+  (is (thrown? #?(:clj Exception :cljs js/Error) (r/register-recovery-payment "" "recovery-1" 1000000 500000 "JPN" 0)))
+  (is (thrown? #?(:clj Exception :cljs js/Error) (r/register-recovery-payment "JPN-00000000" "" 1000000 500000 "JPN" 0)))
+  (is (thrown? #?(:clj Exception :cljs js/Error) (r/register-recovery-payment "JPN-00000000" "recovery-1" -1 500000 "JPN" 0)))
+  (is (thrown? #?(:clj Exception :cljs js/Error) (r/register-recovery-payment "JPN-00000000" "recovery-1" 1000000 -1 "JPN" 0)))
+  (is (thrown? #?(:clj Exception :cljs js/Error) (r/register-recovery-payment "JPN-00000000" "recovery-1" 1000000 500000 "" 0)))
+  (is (thrown? #?(:clj Exception :cljs js/Error) (r/register-recovery-payment "JPN-00000000" "recovery-1" 1000000 500000 "JPN" -1))))
 
 (deftest recovery-history-is-append-only
   (let [p1 (r/register-recovery-payment "JPN-00000000" "recovery-1" 1000000 500000 "JPN" 0)
