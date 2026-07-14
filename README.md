@@ -147,6 +147,7 @@ toward the same lib.
 | `src/reinsurance/operation.cljc` | **OperationActor** -- langgraph-clj StateGraph |
 | `src/reinsurance/sim.cljc` | demo driver |
 | `test/reinsurance/*_test.clj` | governor contract · phase invariants · store parity · registry conformance · facts coverage |
+| `wasm/recovery_mismatch.kotoba` | PoC: a WASM-compiled (`kotoba-lang/kotoba` -> `kotoba-lang/kototama`'s `actor:host` ABI) fixed-point (bps/milli-cents) port of `reinsurance.registry/compute-recovery` + `reinsurance.governor`'s `close?` tolerance, i.e. `reinsurance.governor`'s `:recovery-calculation-mismatch` HARD check -- see `wasm/README.md` for the offset layout and tolerance-scaling rationale |
 
 ## Business-process coverage (honest)
 
