@@ -1,0 +1,150 @@
+(ns cloud-itonami-recovery-mismatch)
+
+;; recovery_mismatch.kotoba -- a WASM-compiled port of
+;; `reinsurance.registry/compute-recovery` (the treaty's own quota-share/
+;; excess-of-loss formula) plus `reinsurance.governor`'s private `close?`
+;; tolerance check, i.e. the independent recompute
+;; `recovery-calculation-mismatch-violations` runs against a claimed
+;; `:recovery/pay` amount (`reinsurance.governor`, check 5 -- HARD, un-
+;; overridable). Follows the same `kotoba wasm emit` -> `kototama.tender`
+;; pipeline `cloud-itonami-isic-6492`'s `affordability.kotoba`,
+;; `cloud-itonami-isic-6511`'s `underwriting_decision.kotoba` and
+;; `cloud-itonami-isic-6630`'s `fee_accrual.kotoba` established (ADR-
+;; 2607062330 addendum 5).
+;;
+;; Why the source differs from `reinsurance.registry/compute-recovery` +
+;; `reinsurance.governor/close?`:
+;;
+;; - No maps/keywords in the wasm-compilable subset, so the treaty record
+;;   is flattened to plain positional i32 args, and the `:treaty-type`
+;;   `case` dispatch (`:quota-share` vs `:excess-of-loss`) becomes a single
+;;   `treaty-type-flag` (0/1) `if` branch (no `case`/`cond` in the subset --
+;;   `compile-wasm-expr` in `kotoba-lang/kotoba/src/kotoba/runtime.clj`
+;;   supports only `do`/`let`/`if` + arithmetic/comparison).
+;; - Drops the `throw`/`ex-info` precondition guards (quota-share-pct in
+;;   [0,1], retention/layer-limit >= 0, underlying-loss-amount >= 0)
+;;   entirely -- a WASM export can't throw a JVM exception, same posture
+;;   `fee_accrual.kotoba` documents: precondition validation stays the
+;;   real `compute-recovery`'s job, the guest only ever sees facts a
+;;   governor already validated.
+;; - No floats: `quota-share-pct` (a `[0,1]` fraction, e.g. `0.5`) becomes
+;;   integer **basis points** (`quota-share-pct-bps`, e.g. `5000` =
+;;   50.00%), the same `rate-bps` convention `fee_accrual.kotoba` uses.
+;;   All money amounts are integer **cents** (smallest currency unit),
+;;   the convention every prior wasm port in this fleet uses.
+;;
+;; TOLERANCE, kept (unlike `fee_accrual.kotoba`'s decision to drop it):
+;; `reinsurance.governor`'s `close?` is `(< (abs (- a b)) 0.01)` -- a
+;; **0.01 (1 cent) absolute band**, four orders of magnitude looser than
+;; `cloud-itonami-isic-6630`'s sibling `fundmgmt.governor/close?`, whose
+;; `1e-6` tolerance that repo's README concluded was pure IEEE-754
+;; double-rounding noise with no integer analog worth porting (the fixed-
+;; point recompute there is exact-integer by construction, no division by
+;; a percentage is ever done). Reinsurance's `0.01` is NOT that: real
+;; double rounding noise on money-scale doubles is ~1e-9..1e-12, so a
+;; `0.01` band is roughly 1e7-1e10x looser than needed for float-noise
+;; absorption alone -- it is deliberately sized to the smallest real
+;; currency unit (the cent), because `compute-recovery`'s quota-share
+;; formula (`underlying-loss * quota-share-pct`) genuinely produces
+;; fractional-cent amounts whenever the percentage doesn't divide the
+;; loss evenly (e.g. a 33.33% share of an odd number of cents), while any
+;; REAL claimed-recovery figure a ceding insurer files is necessarily
+;; rounded to a whole cent (money has no sub-cent denomination to pay
+;; out). `close?` exists to accept that honest, load-bearing rounding
+;; gap -- not to discard as noise.
+;;
+;; This port preserves that gap with real (non-degenerate) width: the
+;; recompute is carried in **milli-cents** (cents x 1000) through the
+;; division step instead of truncating to whole cents immediately, so a
+;; genuine fractional-cent remainder from the quota-share division
+;; survives into the comparison. `claimed-recovery-amount` (always whole
+;; cents, per above) is scaled up to milli-cents (x1000, exact, no
+;; truncation) for the same-unit comparison. The tolerance check is then
+;; `abs-diff-millicents < 1000` -- i.e. "the two amounts agree to within
+;; less than one full cent", the exact reduction of the original `< 0.01`
+;; dollar-scale band into this milli-cent fixed-point domain. (Naively
+;; comparing in whole cents instead -- rounding the recompute down to
+;; cents FIRST, then requiring an integer difference `< 1` -- would
+;; silently collapse the tolerance to exact-match, since two integers
+;; can never differ by a non-zero amount less than 1: the milli-cent
+;; intermediate precision is what keeps the tolerance real.)
+;;
+;; Known scope limit (i32 range, same caveat `fee_accrual.kotoba`
+;; documents): `underlying-loss-cents * quota-share-pct-bps` and
+;; `coverage-limit-cents * 1000` / `claimed-recovery-cents * 1000` /
+;; `layer-recovery-cents * 1000` are each single 32-bit `i32.mul` folds
+;; that must stay under the signed i32 ceiling (~2.147e9) or silently
+;; wrap instead of trapping. This module's test fixtures keep all cents
+;; amounts in the hundreds-to-low-thousands-of-dollars range (well under
+;; that bound with headroom) -- a PoC-scale limitation, not a claim that
+;; the formula holds at real treaty-sized (many-million-dollar) amounts.
+;; Raising it would mean promoting to `i64` arithmetic or restructuring
+;; the fold order, a follow-up, not attempted in this pass.
+;;
+;; ABI: `main` stays 0-arity (the compiler rejects a parameterized main --
+;; :main-arity, see `compile-wasm-expr`) and reads its seven real i32
+;; inputs out of the exported linear memory instead, at fixed byte
+;; offsets a host writes into before calling main() (same convention as
+;; every prior port in this fleet):
+;;   offset 0:  treaty-type-flag           (i32, 0 = quota-share,
+;;                                          1 = excess-of-loss)
+;;   offset 4:  underlying-loss-cents      (i32, smallest currency unit)
+;;   offset 8:  quota-share-pct-bps        (i32, quota-share-pct * 10000
+;;                                          -- basis points; ignored when
+;;                                          treaty-type-flag = 1)
+;;   offset 12: coverage-limit-cents       (i32, cents; ignored when
+;;                                          treaty-type-flag = 1)
+;;   offset 16: retention-cents            (i32, cents; ignored when
+;;                                          treaty-type-flag = 0)
+;;   offset 20: layer-limit-cents          (i32, cents; ignored when
+;;                                          treaty-type-flag = 0)
+;;   offset 24: claimed-recovery-cents     (i32, cents -- the upstream
+;;                                          recovery record's own
+;;                                          :claimed-recovery-amount)
+;; Returns 1 (recomputed recovery matches the claim within the < 1 cent
+;; tolerance band) or 0 (mismatch -- `reinsurance.governor`'s
+;; `:recovery-calculation-mismatch` HARD violation).
+(defn recovery-matches?
+  [treaty-type-flag underlying-loss-cents quota-share-pct-bps coverage-limit-cents
+   retention-cents layer-limit-cents claimed-recovery-cents]
+  (let [recovered-millicents
+        (if (= treaty-type-flag 0)
+          ;; quota-share: recovered = min(loss * pct, coverage-limit).
+          ;; raw-millicents = loss-cents * (pct-bps/10000) * 1000
+          ;;                = loss-cents * pct-bps / 10 -- one quot, no
+          ;; compounded truncation (same single-fold discipline
+          ;; `fee_accrual.kotoba`'s single-quot design uses).
+          (let [raw-millicents (quot (* underlying-loss-cents quota-share-pct-bps) 10)
+                cap-millicents (* coverage-limit-cents 1000)]
+            (if (< raw-millicents cap-millicents) raw-millicents cap-millicents))
+          ;; excess-of-loss: recovered = max(0, min(loss, retention+layer)
+          ;; - retention) -- exact integer cents by construction (no
+          ;; percentage division), so its milli-cents form is always an
+          ;; exact multiple of 1000 and the tolerance band naturally
+          ;; requires exact-cents agreement here, same as `close?` would
+          ;; in the original (no fractional-cent recompute is possible
+          ;; on this branch).
+          (let [layer-top-cents (+ retention-cents layer-limit-cents)
+                capped-loss-cents (if (< underlying-loss-cents layer-top-cents)
+                                     underlying-loss-cents
+                                     layer-top-cents)
+                layer-recovery-cents (- capped-loss-cents retention-cents)]
+            (if (< layer-recovery-cents 0)
+              0
+              (* layer-recovery-cents 1000))))
+        claimed-millicents (* claimed-recovery-cents 1000)
+        diff-millicents (- recovered-millicents claimed-millicents)
+        abs-diff-millicents (if (< diff-millicents 0)
+                               (- 0 diff-millicents)
+                               diff-millicents)]
+    (if (< abs-diff-millicents 1000) 1 0)))
+
+(defn main []
+  (recovery-matches?
+   (mem-i32-at 0 0)
+   (mem-i32-at 0 4)
+   (mem-i32-at 0 8)
+   (mem-i32-at 0 12)
+   (mem-i32-at 0 16)
+   (mem-i32-at 0 20)
+   (mem-i32-at 0 24)))
