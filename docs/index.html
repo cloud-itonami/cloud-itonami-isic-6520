@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reinsurance · Open Business Blueprint for ISIC 6520</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fafafa;
+        }
+        header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        header .isic {
+            font-size: 0.95rem;
+            opacity: 0.85;
+            letter-spacing: 0.05em;
+        }
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        section {
+            background: white;
+            border-radius: 6px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+        section p {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1rem;
+        }
+        section p:last-child {
+            margin-bottom: 0;
+        }
+        .links-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .links-section a {
+            display: inline-block;
+            padding: 0.75rem 1rem;
+            background: #f0f0f0;
+            text-decoration: none;
+            color: #1a1a1a;
+            border-radius: 4px;
+            border-left: 3px solid #333;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .links-section a:hover {
+            background: #e8e8e8;
+            border-left-color: #666;
+        }
+        .cta-section {
+            background: linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 100%);
+            border: 1px solid #e0e0e0;
+            padding: 2rem;
+            border-radius: 6px;
+            margin-top: 2rem;
+        }
+        .cta-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+        .cta-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .cta-btn {
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .cta-btn-primary {
+            background: #1a1a1a;
+            color: white;
+            border: 2px solid #1a1a1a;
+        }
+        .cta-btn-primary:hover {
+            background: white;
+            color: #1a1a1a;
+        }
+        .cta-btn-secondary {
+            background: white;
+            color: #1a1a1a;
+            border: 2px solid #1a1a1a;
+        }
+        .cta-btn-secondary:hover {
+            background: #1a1a1a;
+            color: white;
+        }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        footer a {
+            color: #1a1a1a;
+            text-decoration: none;
+            border-bottom: 1px solid #ccc;
+        }
+        footer a:hover {
+            border-bottom-color: #1a1a1a;
+        }
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.75rem;
+            }
+            main {
+                padding: 1rem;
+            }
+            section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Reinsurance</h1>
+        <p class="isic">ISIC Rev.5 6520 · Open Business Blueprint</p>
+    </header>
+
+    <main>
+        <section>
+            <h2>Treaty and Claims-Recovery Governed for OSS</h2>
+            <p>An open-source business blueprint for risk-transfer contracting between ceding insurers and reinsurers. This actor covers treaty intake through binding and claims-recovery filing through payment, wrapping treaty-LLM proposals in an independent Reinsurance Governor that re-verifies every high-stakes action against spec-cited jurisdiction requirements and this actor's own quota-share/excess-of-loss recovery math.</p>
+            <p>Binding a treaty and paying a recovery are never autonomous—a human reinsurance underwriter always signs off. Every intake, assessment, binding, filing and payment event is recorded to an immutable audit ledger. Any jurisdiction's bordereaux/collateral requirements, recovery calculation mismatch, or double-payment attempt triggers a mandatory hold, not an override.</p>
+            <p>This is a forkable business model: you supply the jurisdiction-specific license, actuarial expertise, and payment integrations; the blueprint supplies the governed, spec-cited, audited execution scaffold so you do not have to build the compliance layer from scratch.</p>
+        </section>
+
+        <section>
+            <h2>Getting Started</h2>
+            <div class="links-section">
+                <a href="https://github.com/com-junkawasaki/cloud-itonami-isic-6520">📖 Repository</a>
+                <a href="./operator-quickstart.md">⚡ Operator Quickstart</a>
+                <a href="./business-model.md">💼 Business Model</a>
+                <a href="./operator-guide.md">🏢 Operator Guide</a>
+                <a href="./adr/0001-architecture.md">🏛️ Architecture Decision Record</a>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h3>Ready to Deploy?</h3>
+            <p>Choose your path to operationalize reinsurance treaty administration in your jurisdiction.</p>
+            <div class="cta-buttons">
+                <a href="https://itonami.cloud/isco-1212/" class="cta-btn cta-btn-primary">Fork + Self-Host →</a>
+                <a href="https://itonami.cloud/docs/go-live.md" class="cta-btn cta-btn-secondary">Managed Path →</a>
+            </div>
+        </section>
+
+        <section>
+            <h2>Scope & Principles</h2>
+            <p><strong>What it covers:</strong> treaty intake with jurisdiction bordereaux/collateral checklisting, treaty binding with independent evidence verification, claims-recovery filing and payment with re-verified recovery calculations, and immutable audit ledger.</p>
+            <p><strong>What it doesn't cover:</strong> licensing (supplied by operator), aggregate deductibles or reinstatement premiums, real transfer-agent or banking-payment integration, retrocession tracking or multi-layer towers.</p>
+            <p><strong>Built on:</strong> <code>langgraph-clj</code> StateGraph runtime (portable .cljc, supervised loop, interrupts, Datomic/in-mem checkpoints) — the same actor pattern as <a href="https://github.com/com-junkawasaki/cloud-itonami-isic-6511">life insurance (6511)</a>, <a href="https://github.com/com-junkawasaki/cloud-itonami-isic-6512">non-life insurance (6512)</a>, and sister ISIC services.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>Built by <a href="https://itonami.cloud">itonami</a> · <a href="https://github.com/com-junkawasaki/cloud-itonami-isic-6520">Open Source (AGPL-3.0-or-later)</a></p>
+    </footer>
+</body>
+</html>
