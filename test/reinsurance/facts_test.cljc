@@ -20,3 +20,25 @@
     (is (facts/required-evidence-satisfied? "JPN" all))
     (is (not (facts/required-evidence-satisfied? "JPN" (rest all))))
     (is (not (facts/required-evidence-satisfied? "ATL" all)) "no spec-basis -> never satisfied")))
+
+(deftest che-has-a-spec-basis
+  (is (some? (facts/spec-basis "CHE")))
+  (is (string? (:provenance (facts/spec-basis "CHE"))))
+  (is (= "Switzerland" (:name (facts/spec-basis "CHE"))))
+  (is (= "Eidgenössische Finanzmarktaufsicht FINMA (Swiss Financial Market Supervisory Authority)"
+         (:owner-authority (facts/spec-basis "CHE")))))
+
+(deftest che-required-evidence-omits-a-fabricated-tied-assets-item
+  ;; FINMA confirms Swiss law imposes no tied-assets/collateral requirement on
+  ;; reinsurers specifically (an explicit exception to "treated like primary
+  ;; insurers") -- the checklist must not invent one just to look uniform
+  ;; with DEU/GBR/JPN's collateral/trust-fund confirmation item.
+  (let [items (facts/evidence-checklist "CHE")]
+    (is (= 4 (count items)))
+    (is (not (some #(re-find #"(?i)tied.assets|collateral|trust.fund" %) items)))))
+
+(deftest coverage-includes-che-alongside-the-other-three
+  (let [report (facts/coverage ["CHE" "DEU" "GBR" "JPN"])]
+    (is (= 4 (:covered report)))
+    (is (= ["CHE" "DEU" "GBR" "JPN"] (:covered-jurisdictions report)))
+    (is (empty? (:missing-jurisdictions report)))))
