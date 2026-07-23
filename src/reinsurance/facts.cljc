@@ -68,7 +68,44 @@
           :required-evidence ["Vertragsentwurf (draft treaty wording)"
                               "Prämienabrechnung (ceded-premium bordereaux)"
                               "Rating-Bescheinigung des Rückversicherers (reinsurer rating certificate)"
-                              "SST-Quotenbestätigung (Swiss Solvency Test ratio confirmation)"]}})
+                              "SST-Quotenbestätigung (Swiss Solvency Test ratio confirmation)"]}
+   ;; IRL citations independently fetched+read directly this session
+   ;; (2026-07-23) from irishstatutebook.ie's own print view (HTTP 200,
+   ;; no bot-detection challenge). Confirmed verbatim on the
+   ;; Regulations' own Citation and commencement clause (Regulation
+   ;; 1(1)-(2)): "These Regulations may be cited as the European Union
+   ;; (Insurance and Reinsurance) Regulations 2015. ... these
+   ;; Regulations come into operation on 1 January 2016." Confirmed the
+   ;; Regulations' own Interpretation clause defines "Bank" as "Central
+   ;; Bank of Ireland" -- matching every other Irish entry this fleet
+   ;; has independently verified this session. Confirmed regulation
+   ;; 12(1) (Prohibition against carrying on insurance etc. without
+   ;; authorisation) verbatim: "A person shall not-- (a) carry on the
+   ;; business of insurance of any class, or any reinsurance activity,
+   ;; in the State unless the person holds an authorisation covering
+   ;; the class of insurance or the reinsurance activity, or (b) claim
+   ;; to be, or represent itself as, an insurance undertaking or
+   ;; reinsurance undertaking in the State unless the person holds an
+   ;; authorisation covering insurance or reinsurance." These
+   ;; Regulations transpose the EU Solvency II Directive (2009/138/EC)
+   ;; -- the same directive DEU's own entry in this catalog cites for
+   ;; its own transposition. HONEST GAP: this iteration did not
+   ;; independently confirm a specific reinsurance-collateral or
+   ;; ceded-premium-bordereaux article number within these Regulations
+   ;; distinct from the general authorisation-prohibition text above --
+   ;; :required-evidence below mirrors the generic checklist this
+   ;; catalog's own docstring describes as "the generic treaty-
+   ;; bordereaux evidence set submitted in some form", not a literal
+   ;; per-article derivation.
+   "IRL" {:name "Ireland"
+          :owner-authority "Central Bank of Ireland"
+          :legal-basis "European Union (Insurance and Reinsurance) Regulations 2015 (S.I. No. 485 of 2015), transposing Solvency II Directive 2009/138/EC"
+          :national-spec "Regulation 12(1): a person shall not carry on the business of insurance or any reinsurance activity in the State, or claim to be a reinsurance undertaking, unless the person holds an authorisation covering the reinsurance activity"
+          :provenance "https://www.irishstatutebook.ie/eli/2015/si/485/made/en/print"
+          :required-evidence ["Draft treaty wording"
+                              "Ceded-premium bordereaux"
+                              "Ceding-insurer rating certificate"
+                              "Collateral/trust-fund confirmation"]}})
 
 (defn spec-basis
   "The jurisdiction's requirement map, or nil -- nil means NO spec-basis,
