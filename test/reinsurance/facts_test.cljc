@@ -42,3 +42,15 @@
     (is (= 4 (:covered report)))
     (is (= ["CHE" "DEU" "GBR" "JPN"] (:covered-jurisdictions report)))
     (is (empty? (:missing-jurisdictions report)))))
+
+(deftest irl-has-a-spec-basis
+  (is (some? (facts/spec-basis "IRL")))
+  (is (string? (:provenance (facts/spec-basis "IRL"))))
+  (is (= "Central Bank of Ireland" (:owner-authority (facts/spec-basis "IRL"))))
+  (is (re-find #"S\.I\. No\. 485 of 2015" (:legal-basis (facts/spec-basis "IRL")))))
+
+(deftest coverage-includes-irl-alongside-all-others
+  (let [report (facts/coverage ["CHE" "DEU" "GBR" "IRL" "JPN"])]
+    (is (= 5 (:covered report)))
+    (is (= ["CHE" "DEU" "GBR" "IRL" "JPN"] (:covered-jurisdictions report)))
+    (is (empty? (:missing-jurisdictions report)))))
