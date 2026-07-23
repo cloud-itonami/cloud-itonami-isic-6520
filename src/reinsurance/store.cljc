@@ -34,10 +34,9 @@
   ceding insurer trusting a reinsurer with a treaty needs, and the
   evidence an operator needs if a binding or a recovery payment is
   later disputed."
-  (:require #?(:clj  [clojure.edn :as edn]
-               :cljs [cljs.reader :as edn])
-            [reinsurance.registry :as registry]
-            [langchain.db :as d]))
+  (:require [reinsurance.registry :as registry]
+            [langchain.db :as d]
+            [langchain-store.core :as ls]))
 
 (defprotocol Store
   (treaty [s id])
@@ -182,9 +181,6 @@
    :sequence/jurisdiction      {:db/unique :db.unique/identity}
    :recovery-sequence/jurisdiction {:db/unique :db.unique/identity}})
 
-(defn- enc [v] (pr-str v))
-(defn- dec* [s] (when s (edn/read-string s)))
-
 (defn- treaty->tx [{:keys [id ceding-insurer treaty-type quota-share-pct coverage-limit
                           retention layer-limit jurisdiction status treaty-number]}]
   (cond-> {:treaty/id id}
@@ -242,21 +238,21 @@
   (recovery [_ id]
     (pull->recovery (d/pull (d/db conn) recovery-pull [:recovery/id id])))
   (assessment-of [_ treaty-id]
-    (dec* (d/q '[:find ?p . :in $ ?tid
+    (ls/dec* (d/q '[:find ?p . :in $ ?tid
                 :where [?a :assessment/treaty-id ?tid] [?a :assessment/payload ?p]]
               (d/db conn) treaty-id)))
   (ledger [_]
     (->> (d/q '[:find ?s ?f :where [?e :ledger/seq ?s] [?e :ledger/fact ?f]] (d/db conn))
          (sort-by first)
-         (mapv (comp dec* second))))
+         (mapv (comp ls/dec* second))))
   (binding-history [_]
     (->> (d/q '[:find ?s ?r :where [?e :binding/seq ?s] [?e :binding/record ?r]] (d/db conn))
          (sort-by first)
-         (mapv (comp dec* second))))
+         (mapv (comp ls/dec* second))))
   (recovery-history [_]
     (->> (d/q '[:find ?s ?r :where [?e :payment/seq ?s] [?e :payment/record ?r]] (d/db conn))
          (sort-by first)
-         (mapv (comp dec* second))))
+         (mapv (comp ls/dec* second))))
   (next-sequence [_ jurisdiction]
     (or (d/q '[:find ?n . :in $ ?j
               :where [?e :sequence/jurisdiction ?j] [?e :sequence/next ?n]]
@@ -275,7 +271,7 @@
       (d/transact! conn [(treaty->tx value)])
 
       :assessment/set
-      (d/transact! conn [{:assessment/treaty-id (first path) :assessment/payload (enc payload)}])
+      (d/transact! conn [{:assessment/treaty-id (first path) :assessment/payload (ls/enc payload)}])
 
       :treaty/mark-bound
       (let [treaty-id (first path)
@@ -285,7 +281,7 @@
         (d/transact! conn
                      [(treaty->tx (assoc treaty-patch :id treaty-id))
                       {:sequence/jurisdiction jurisdiction :sequence/next next-n}
-                      {:binding/seq (count (binding-history s)) :binding/record (enc (get result "record"))}])
+                      {:binding/seq (count (binding-history s)) :binding/record (ls/enc (get result "record"))}])
         result)
 
       :recovery/filed
@@ -299,12 +295,12 @@
         (d/transact! conn
                      [(recovery->tx (assoc recovery-patch :id recovery-id))
                       {:recovery-sequence/jurisdiction jurisdiction :recovery-sequence/next next-n}
-                      {:payment/seq (count (recovery-history s)) :payment/record (enc (get result "record"))}])
+                      {:payment/seq (count (recovery-history s)) :payment/record (ls/enc (get result "record"))}])
         result)
       nil)
     s)
   (append-ledger! [s fact]
-    (d/transact! conn [{:ledger/seq (count (ledger s)) :ledger/fact (enc fact)}])
+    (d/transact! conn [{:ledger/seq (count (ledger s)) :ledger/fact (ls/enc fact)}])
     fact)
   (with-treaties [s treaties]
     (when (seq treaties) (d/transact! conn (mapv treaty->tx (vals treaties)))) s))
