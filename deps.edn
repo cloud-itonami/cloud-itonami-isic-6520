@@ -8,7 +8,16 @@
  :deps {io.github.com-junkawasaki/langgraph-clj
         {:local/root "../../kotoba-lang/langgraph"}
         io.github.kotoba-lang/langchain-store
-        {:local/root "../../kotoba-lang/langchain-store"}}
+        {:local/root "../../kotoba-lang/langchain-store"}
+        ;; jp-go-dds (デジタル庁デザインシステム) -- the workspace's BASE
+        ;; design system (root CLAUDE.md, 2026-08-05).
+        ;; `reinsurance.render-html` inlines `jp-go-dds.skin/dds+skin`
+        ;; into the generated operator console. Pinned by git coordinate
+        ;; (not :local/root) so the render-html build also works in a
+        ;; standalone fork outside this monorepo checkout.
+        io.github.kotoba-lang/jp-go-digital-design-system
+        {:git/url "https://github.com/kotoba-lang/jp-go-digital-design-system"
+         :git/sha "83db99546eabc53613ae826ea41d1533a3c574af"}}
  :aliases
  {;; offline workspace dev -- pin transitive langchain-clj to local checkout
   :dev {:override-deps
@@ -16,6 +25,11 @@
          {:local/root "../../kotoba-lang/langchain"}}}
   ;; clojure -M:dev:run  -> drive the demo through one OperationActor
   :run {:main-opts ["-m" "reinsurance.sim"]}
+  ;; clojure -M:dev:render-html [out-file] -> regenerate
+  ;; docs/samples/operator-console.html through the REAL actor
+  ;; (flagship checklist item 2, ADR-2607189300). THROWS if the run
+  ;; produces no HARD governor hold -- see reinsurance.render-html.
+  :render-html {:main-opts ["-m" "reinsurance.render-html"]}
   :test {:extra-paths ["test"]
          :extra-deps {io.github.cognitect-labs/test-runner
                       {:git/tag "v0.5.1" :git/sha "dfb30dd"}
