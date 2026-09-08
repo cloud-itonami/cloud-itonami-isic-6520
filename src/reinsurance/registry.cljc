@@ -28,7 +28,7 @@
   the treaty or paying the recovery itself (those are `reinsurance.
   operation`'s `:treaty/bind` and `:recovery/pay`, always human-gated --
   see README `Actuation`)."
-  (:require [clojure.string :as str]))
+  (:require [kotoba.lang.text :as str]))
 
 (defn- unsigned-certificate
   "Every certificate this actor produces is UNSIGNED -- signature is the
@@ -99,7 +99,7 @@
     (throw (ex-info "binding: jurisdiction required" {})))
   (when (< sequence 0)
     (throw (ex-info "binding: sequence must be >= 0" {})))
-  (let [treaty-number (str (str/upper-case jurisdiction) "-" (zero-pad sequence 8))
+  (let [treaty-number (str (str/upper jurisdiction) "-" (zero-pad sequence 8))
         record {"record_id" treaty-number
                 "kind" "binding-draft"
                 "ceding_insurer" ceding-insurer
@@ -130,7 +130,7 @@
     (throw (ex-info "recovery-payment: jurisdiction required" {})))
   (when (< sequence 0)
     (throw (ex-info "recovery-payment: sequence must be >= 0" {})))
-  (let [payment-number (str (str/upper-case jurisdiction) "-RECOV-" (zero-pad sequence 6))
+  (let [payment-number (str (str/upper jurisdiction) "-RECOV-" (zero-pad sequence 6))
         record {"record_id" payment-number
                 "kind" "recovery-payment-draft"
                 "treaty_number" treaty-number
