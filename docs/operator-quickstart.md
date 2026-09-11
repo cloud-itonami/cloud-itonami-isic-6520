@@ -42,7 +42,7 @@ clojure -M:lint
 
 ## Governor Location
 
-The Reinsurance Governor is at **`src/reinsurance/governor.cljc`**.
+The Reinsurance Governor is at **`src/reinsurance/governor.cljk`**.
 
 Key entry points:
 - **`:actuation/bind`** — gate for treaty binding (never auto; enforces human approval)
@@ -50,11 +50,11 @@ Key entry points:
 - **5 HARD checks** — spec-basis, evidence-incomplete, treaty-not-bound, recovery-missing, recovery-calculation-mismatch
 - **Double-payment guard** — checked against the actor's own recovery-payment history
 
-The Governor is independent of the Treaty-LLM (in `src/reinsurance/treatyllm.cljc`). The LLM proposes; the Governor verifies. Any violation forces a `:hold` state, not an override.
+The Governor is independent of the Treaty-LLM (in `src/reinsurance/treatyllm.cljk`). The LLM proposes; the Governor verifies. Any violation forces a `:hold` state, not an override.
 
 ## Actor Graph
 
-The OperationActor is built with `langgraph-clj` StateGraph at **`src/reinsurance/operation.cljc`**:
+The OperationActor is built with `langgraph-clj` StateGraph at **`src/reinsurance/operation.cljk`**:
 
 ```
 read-only intake
@@ -82,7 +82,7 @@ Phases 0–3 map to: read-only → intake-eligible → assess-eligible → super
 
 ## Phase State Machine
 
-Defined in **`src/reinsurance/phase.cljc`**. Each phase gates which operations are auto-eligible vs require approval:
+Defined in **`src/reinsurance/phase.cljk`**. Each phase gates which operations are auto-eligible vs require approval:
 
 - **Phase 0 (read-only):** intake-ingest only
 - **Phase 1 (assisted intake):** intake actions (`:treaty/intake`, `:jurisdiction/assess`)
@@ -91,7 +91,7 @@ Defined in **`src/reinsurance/phase.cljc`**. Each phase gates which operations a
 
 ## Store Backend
 
-Two implementations in **`src/reinsurance/store.cljc`**:
+Two implementations in **`src/reinsurance/store.cljk`**:
 
 - **MemStore** — in-memory hashmap (testing, demos)
 - **DatomicStore** — Datomic (append-only ledger, audit trail, schema enforcement)
@@ -100,7 +100,7 @@ Both implement the same `Store` protocol. Production deployments use DatomicStor
 
 ## Jurisdiction Facts & Bordereaux
 
-**`src/reinsurance/facts.cljc`** catalogs per-jurisdiction reinsurance requirements with official spec-basis citations:
+**`src/reinsurance/facts.cljk`** catalogs per-jurisdiction reinsurance requirements with official spec-basis citations:
 
 - Currently seeded: **JPN**, **USA-NY**, **GBR**, **DEU** (4 out of ~194 jurisdictions worldwide)
 - To add a jurisdiction: one map entry in the catalog, citing a real official source
@@ -108,7 +108,7 @@ Both implement the same `Store` protocol. Production deployments use DatomicStor
 
 ## Recovery Math (Simplified)
 
-**`src/reinsurance/registry.cljc`** implements quota-share and excess-of-loss recovery calculations.
+**`src/reinsurance/registry.cljk`** implements quota-share and excess-of-loss recovery calculations.
 
 **What it does model:** basic percentage-of-loss and layer-threshold logic for the two treaty types.
 
@@ -125,7 +125,7 @@ The Governor's `:recovery-calculation-mismatch` check re-computes recovery indep
 - Ensure stderr is visible: `clojure -M:dev:run 2>&1 | head -50`
 
 **Governor holds a proposal I think should pass**
-- Check `src/reinsurance/governor.cljc` for the reason: spec-basis citation missing, evidence incomplete, treaty not bound, recovery calc mismatch, or double-payment attempted. The hold is by design.
+- Check `src/reinsurance/governor.cljk` for the reason: spec-basis citation missing, evidence incomplete, treaty not bound, recovery calc mismatch, or double-payment attempted. The hold is by design.
 
 ## Next Steps
 

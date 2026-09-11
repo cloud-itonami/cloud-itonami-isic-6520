@@ -5,10 +5,10 @@ recovery` (the treaty's own quota-share/excess-of-loss formula) plus
 `reinsurance.governor`'s private `close?` tolerance check -- the
 independent recompute `reinsurance.governor`'s `:recovery-calculation-
 mismatch` HARD check runs against an upstream `:recovery/pay` request's
-own `:claimed-recovery-amount` (see `src/reinsurance/governor.cljc`'s ns
+own `:claimed-recovery-amount` (see `src/reinsurance/governor.cljk`'s ns
 docstring, check 5) -- into the minimal `.kotoba` language subset,
 compiled to a real WASM module via `kotoba wasm emit`, and hosted via
-`kototama.tender` (`test/wasm/recovery_mismatch_test.clj`).
+`kototama.tender` (`test/wasm/recovery_mismatch_test.cljk`).
 
 This follows the same `kotoba wasm emit` → `kototama.tender` pipeline
 `cloud-itonami-isic-6492`'s `wasm/affordability.kotoba`,

@@ -138,14 +138,14 @@ toward the same lib.
 
 | File | Role |
 |---|---|
-| `src/reinsurance/store.cljc` | **Store** protocol -- `MemStore` ‖ `DatomicStore` (`langchain.db`) + append-only audit ledger + treaty-binding/recovery-payment history. No separate party/conflict concept -- this actor's distinctive check is an independent-recompute check, not a party screen |
-| `src/reinsurance/registry.cljc` | Treaty-binding + recovery-payment draft records, plus `compute-recovery` (REAL, simplified quota-share/excess-of-loss formulas -- see docstring for what they do not model) |
-| `src/reinsurance/facts.cljc` | Per-jurisdiction reinsurance bordereaux/collateral-disclosure catalog with an official spec-basis citation per entry, honest coverage reporting |
-| `src/reinsurance/treatyllm.cljc` | **Treaty-LLM Advisor** -- `mock-advisor` ‖ `llm-advisor`; intake/assessment/binding/recovery-filing/recovery-payment proposals |
-| `src/reinsurance/governor.cljc` | **Reinsurance Governor** -- 5 HARD checks (spec-basis · evidence-incomplete · treaty-not-bound · recovery-missing · recovery-calculation-mismatch, independent recompute) + double-payment guard + 1 soft (confidence/actuation gate) |
-| `src/reinsurance/phase.cljc` | **Phase 0→3** -- read-only → assisted intake → assisted assess → supervised (binding/payment always human; treaty intake + recovery filing auto-eligible, no capital risk) |
-| `src/reinsurance/operation.cljc` | **OperationActor** -- langgraph-clj StateGraph |
-| `src/reinsurance/sim.cljc` | demo driver |
+| `src/reinsurance/store.cljk` | **Store** protocol -- `MemStore` ‖ `DatomicStore` (`langchain.db`) + append-only audit ledger + treaty-binding/recovery-payment history. No separate party/conflict concept -- this actor's distinctive check is an independent-recompute check, not a party screen |
+| `src/reinsurance/registry.cljk` | Treaty-binding + recovery-payment draft records, plus `compute-recovery` (REAL, simplified quota-share/excess-of-loss formulas -- see docstring for what they do not model) |
+| `src/reinsurance/facts.cljk` | Per-jurisdiction reinsurance bordereaux/collateral-disclosure catalog with an official spec-basis citation per entry, honest coverage reporting |
+| `src/reinsurance/treatyllm.cljk` | **Treaty-LLM Advisor** -- `mock-advisor` ‖ `llm-advisor`; intake/assessment/binding/recovery-filing/recovery-payment proposals |
+| `src/reinsurance/governor.cljk` | **Reinsurance Governor** -- 5 HARD checks (spec-basis · evidence-incomplete · treaty-not-bound · recovery-missing · recovery-calculation-mismatch, independent recompute) + double-payment guard + 1 soft (confidence/actuation gate) |
+| `src/reinsurance/phase.cljk` | **Phase 0→3** -- read-only → assisted intake → assisted assess → supervised (binding/payment always human; treaty intake + recovery filing auto-eligible, no capital risk) |
+| `src/reinsurance/operation.cljk` | **OperationActor** -- langgraph-clj StateGraph |
+| `src/reinsurance/sim.cljk` | demo driver |
 | `test/reinsurance/*_test.clj` | governor contract · phase invariants · store parity · registry conformance · facts coverage |
 | `wasm/recovery_mismatch.kotoba` | PoC: a WASM-compiled (`kotoba-lang/kotoba` -> `kotoba-lang/kototama`'s `actor:host` ABI) fixed-point (bps/milli-cents) port of `reinsurance.registry/compute-recovery` + `reinsurance.governor`'s `close?` tolerance, i.e. `reinsurance.governor`'s `:recovery-calculation-mismatch` HARD check -- see `wasm/README.md` for the offset layout and tolerance-scaling rationale |
 

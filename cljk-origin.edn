@@ -1,0 +1,23 @@
+{:format :kotoba.cljk-origin/v1
+ :renamed-on "2026-09-11"
+ :decision "adr-2609111500-cljk-rename-all-clojure-source (com-junkawasaki/root 90-docs/adr; owner instruction 2026-09-11)"
+ :rule "value = the extension the file had before the rename. A path ending in .clj.cljk or .cljs.cljk kept it in the name because both platform files existed (or the plain target was taken)."
+ :origins
+ {"src/reinsurance/facts.cljk" ".cljc"
+  "src/reinsurance/governor.cljk" ".cljc"
+  "src/reinsurance/kernels/gate.cljk" ".cljc"
+  "src/reinsurance/operation.cljk" ".cljc"
+  "src/reinsurance/phase.cljk" ".cljc"
+  "src/reinsurance/registry.cljk" ".cljc"
+  "src/reinsurance/render_html.cljk" ".clj"
+  "src/reinsurance/sim.cljk" ".cljc"
+  "src/reinsurance/store.cljk" ".cljc"
+  "src/reinsurance/treatyllm.cljk" ".cljc"
+  "test/reinsurance/facts_test.cljk" ".cljc"
+  "test/reinsurance/governor_contract_test.cljk" ".cljc"
+  "test/reinsurance/kernels/gate_test.cljk" ".cljc"
+  "test/reinsurance/phase_test.cljk" ".cljc"
+  "test/reinsurance/portable_cljs_test_runner.cljk" ".cljc"
+  "test/reinsurance/registry_test.cljk" ".cljc"
+  "test/reinsurance/store_contract_test.cljk" ".cljc"
+  "test/wasm/recovery_mismatch_test.cljk" ".clj"}}
