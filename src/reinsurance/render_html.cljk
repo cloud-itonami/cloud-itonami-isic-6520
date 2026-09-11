@@ -27,7 +27,7 @@
       minted, read back out of the store's append-only histories.
 
   Scenario shape (adapted from this repo's own `reinsurance.sim` demo
-  driver, `clojure -M:dev:run`, which was run BEFORE this file was
+  driver, `kbb -M:dev:run`, which was run BEFORE this file was
   written and confirmed to produce a sensible ledger against the real
   seeded treaty ids `treaty-1`..`treaty-3`):
 
@@ -67,7 +67,7 @@
   Deterministic: no timestamps, no random ids, byte-identical across
   reruns against the same seed (verify by diffing two consecutive runs).
 
-  Usage: `clojure -M:dev:render-html [out-file]`
+  Usage: `kbb -M:dev:render-html [out-file]`
   (default `docs/samples/operator-console.html`)."
   (:require [jp-go-dds.skin]
             [kotoba.lang.text :as str]
@@ -554,7 +554,7 @@
      (section
       "How this page was produced"
       (str "Generated at build time by <code>reinsurance.render-html</code> "
-           "(<code>clojure -M:dev:render-html</code>), which drives the real actor "
+           "(<code>kbb -M:dev:render-html</code>), which drives the real actor "
            "<code>reinsurance.operation</code> &rarr; <code>reinsurance.governor</code> &rarr; "
            "<code>reinsurance.store</code> through <code>langgraph.graph/run*</code> and renders "
            "whatever that run produced. Nothing below is hand-written HTML.")
