@@ -1,5 +1,5 @@
 (ns reinsurance.sim
-  "Demo driver -- `clojure -M:dev:run`. Walks a clean quota-share treaty
+  "Demo driver -- `kbb -M:dev:run`. Walks a clean quota-share treaty
   through intake -> jurisdiction bordereaux/collateral assessment ->
   treaty-bind proposal (always escalates) -> human approval -> commit,
   then a clean claims-recovery through filing (auto-commits; no capital

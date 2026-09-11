@@ -11,7 +11,7 @@
 Verify the Reinsurance Governor contract, phase invariants, and registry conformance:
 
 ```bash
-clojure -M:dev:test
+kbb -M:dev:test
 ```
 
 Tests cover:
@@ -27,7 +27,7 @@ Tests cover:
 Walk through two clean treaty-bind + recovery-payment lifecycles and five HARD-hold cases:
 
 ```bash
-clojure -M:dev:run
+kbb -M:dev:run
 ```
 
 The demo driver (`reinsurance.sim`) exercises the OperationActor with mock advisor proposals and logs governor verdicts and holds to stdout.
@@ -37,7 +37,7 @@ The demo driver (`reinsurance.sim`) exercises the OperationActor with mock advis
 Lint with clj-kondo (errors fail CI):
 
 ```bash
-clojure -M:lint
+kbb -M:lint
 ```
 
 ## Governor Location
@@ -122,7 +122,7 @@ The Governor's `:recovery-calculation-mismatch` check re-computes recovery indep
 - Check that `langgraph-clj` and `langchain-clj` are available: either as local checkouts (monorepo mode, `:dev` alias) or via git coordinates (standalone fork).
 
 **Demo doesn't produce output**
-- Ensure stderr is visible: `clojure -M:dev:run 2>&1 | head -50`
+- Ensure stderr is visible: `kbb -M:dev:run 2>&1 | head -50`
 
 **Governor holds a proposal I think should pass**
 - Check `src/reinsurance/governor.cljk` for the reason: spec-basis citation missing, evidence incomplete, treaty not bound, recovery calc mismatch, or double-payment attempted. The hold is by design.
