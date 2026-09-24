@@ -1,0 +1,45 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:dev:physics` runs it.
+;;
+;; README "Robotics premise": a secure document-custody robot manages physical
+;; treaty-archive vaulting and courier between ceding insurer and reinsurer
+;; (ISIC 6520, reinsurance). Its physical work: couriering treaty binders
+;; between the two parties' mailrooms (with a ramp between buildings), filing
+;; bound treaty volumes on compact-shelving, and keeping the vault's paper
+;; below charring temperature through a 2-hour fire.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isic-6520"
+ :cases
+ [{:id :treaty-courier-over-ramp
+   :kind :transport
+   :procedure "custody robot carries a locked tote of treaty binders from the cedent's mailroom to the reinsurer's registry over the ramp between buildings"
+   :params {:mass-kg 55.0 :distance-m 120.0 :v-max-mps 1.0 :a-max-mps2 0.5
+            :brake-decel-mps2 0.8 :drive-force-n 150.0 :crr 0.02 :slope-deg 4.8
+            :cog-height-m 0.50 :support-half-length-m 0.25 :max-time-s 3600.0}
+   :sweep {:param :payload-kg :values [10.0 30.0 60.0 90.0 120.0]}
+   :quantity :cycle-time-s
+   :limit {:max 150.0 :basis "estimate: inter-building custody leg inside the registry's hand-over window"}
+   :boundary {:lo 1.0 :hi 300.0}}
+  {:id :treaty-volume-to-shelf
+   :kind :manipulator
+   :procedure "arm files a bound treaty volume from the tote onto a compact-shelving bay"
+   :params {:l1-m 0.45 :l2-m 0.40 :m1-kg 3.5 :m2-kg 2.5
+            :from [0.50 0.15] :to [0.20 0.65] :duration-s 2.5 :steps 500}
+   :sweep {:param :payload-kg :values [0.5 1.5 3.0 5.0 7.0]}
+   :quantity :peak-tau1-nm
+   :limit {:max 60.0 :basis "estimate: continuous shoulder torque of a light collaborative arm (~5 kg class)"}
+   :boundary {:lo 0.1 :hi 20.0}}
+  {:id :treaty-vault-wall-2h
+   :kind :thermal
+   :procedure "treaty vault wall (insulating fill) under a 2 h standard fire, then cool-down; the inner face must stay below paper-char temperature"
+   :params {:conductivity-w-mk 0.25 :density-kg-m3 1000.0 :specific-heat-j-kgk 1100.0
+            :hot-curve :iso-834 :h-front-w-m2k 25.0 :h-back-w-m2k 5.0
+            :heating-s 7200.0 :t-cool-c 20.0 :duration-s 21600.0 :nodes 15
+            :threshold-c 177.0}
+   :sweep {:param :thickness-m :values [0.05 0.07 0.09 0.12 0.15]}
+   :quantity :peak-back-c
+   :limit {:max 177.0 :basis "UL 72 Class 350: interior of record-protection equipment must stay below 350 F (177 C) (exposure here is the ISO 834-1 curve, not UL 72's ASTM E119 furnace; fill properties are estimates)"}
+   :boundary {:lo 0.03 :hi 0.25}}]}
