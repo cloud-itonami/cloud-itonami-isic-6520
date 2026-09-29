@@ -32,7 +32,7 @@
         io.github.kotoba-lang/langchain-store
         {:local/root "../../kotoba-lang/langchain-store"}
         ;; jp-go-dds (デジタル庁デザインシステム) -- the workspace's BASE
-        ;; design system (root CLAUDE.md, 2026-08-05).
+        ;; design system (root AGENTS.md, 2026-08-05).
         ;; `reinsurance.render-html` inlines `jp-go-dds.skin/dds+skin`
         ;; into the generated operator console. Pinned by git coordinate
         ;; (not :local/root) so the render-html build also works in a
